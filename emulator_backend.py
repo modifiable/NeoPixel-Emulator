@@ -38,9 +38,13 @@ class Adafruit_NeoPixel():
             for pixel in range(start,count+start):
                 self.setPixelColor(pixel,color)
     def setBrightness(self, new_brightness): #use opacity to represent this
-        if new_brightness >= 0 and new_brightness <= 100:
-            self.brightness = new_brightness
-            self.gui.change_brightness(self.brightness)
+        if new_brightness >= 0:
+            if new_brightness > 100:
+                self.brightness = 100
+                self.gui.change_brightness(self.brightness)
+            else:
+                self.brightness = new_brightness
+                self.gui.change_brightness(self.brightness)
         else:
             return False
     def clear(self):
