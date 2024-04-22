@@ -1,20 +1,39 @@
 from emulator_backend import Adafruit_NeoPixel
 from neopixel_effects import NeoPixel_Effects
+import numpy as np
 from musicData.beatDetection import brightness_values
+from musicData.beatDetection import timestamps
+
 
 def run():
-    pixels = Adafruit_NeoPixel(100,6,"NEO_GRB + NEO_KHZ800")
+    pixels = Adafruit_NeoPixel(500,6,"NEO_GRB + NEO_KHZ800")
     effects = NeoPixel_Effects(pixels)
     pixels.begin()
 
-    brightness_values_scaled = [int(b * 10000) for b in brightness_values]
+    original_array = brightness_values
 
-    print(brightness_values_scaled)
+    # Find the minimum and maximum values
+    min_value = np.min(original_array)
+    max_value = np.max(original_array)
 
-    for brightness_value in brightness_values_scaled:
-        pixels.setBrightness(brightness_value)
-        pixels.fill(pixels.Color(255,255,255),0,100)
-        pixels.delay(500)
+    # Scale the array to range from 0 to 100
+    scaled_array = ((original_array - min_value) / (max_value - min_value)) * 100
+
+    print("Original array:", original_array)
+    print("Scaled array:", scaled_array)
+
+    # for brightness_value in scaled_array:
+    #     pixels.setBrightness(brightness_value)
+    #     pixels.fill(pixels.Color(255,255,255),0,500)
+    #     pixels.delay(500)
+    #     pixels.show()
+
+    for i in range(len(scaled_array)):
+        pixels.setBrightness(scaled_array[i])
+        pixels.fill(pixels.Color(255,255,255),0,500)
+        if not (i+1 >= len(timestamps)):
+            print((timestamps[i+1] - timestamps[i])*1000)
+            pixels.delay((timestamps[i+1] - timestamps[i])*1000)
         pixels.show()
 
     #pixels.fill(pixels.Color(177,160,240),4,10)
